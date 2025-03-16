@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Image Processor</title>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 30px; }
+        #preview, #output { max-width: 400px; height: auto; margin-top: 10px; display: none; border: 2px solid black; }
+        button { margin: 5px; padding: 10px; font-size: 16px; cursor: pointer; }
+    </style>
+</head>
+<body>
+
+    <h2>Upload an Image</h2>
+    <input type="file" id="fileInput">
+    <br>
+    <h3>Original Image</h3>
+    <img id="preview" src="" alt="Uploaded Image">
+    
+    <h3>Processed Image</h3>
+    <img id="output" src="" alt="Processed Image">
+    
+    <br>
+    <button onclick="applyEffect('cartoon')">Cartoonize</button>
+    <button onclick="applyEffect('sketch')">Sketchpen (B&W)</button>
+    <button onclick="applyEffect('sketch_color')">Sketchpen (Color)</button>
+
+    <script>
+        $("#fileInput").change(function () {
+            var file = this.files[0];
+            var formData = new FormData();
+            formData.append("file", file);
+
+            $.ajax({
+                url: "/upload",
+                type: "POST",
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    if (response.image_url) {
+                        $("#preview").attr("src", response.image_url).show();
+                        $("#output").hide();
+                    }
+                }
+            });
+        });
+
+        function applyEffect(effect) {
+            $.ajax({
+                url: "/process",
+                type: "POST",
+                contentType: "application/json",
+                data: JSON.stringify({ effect: effect }),
+                success: function (response) {
+                    if (response.image_url) {
+                        $("#output").attr("src", response.image_url).show();
+                    }
+                }
+            });
+        }
+    </script>
+
+</body>
+</html>

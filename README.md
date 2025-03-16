@@ -7,3 +7,4 @@
 3.enjoy!!
 
 porpose:- to make images more drawable
+note:- this works well on some images and not on others
